@@ -88,6 +88,8 @@ AboutDialog::AboutDialog(bool inGame)
 	: Dialog(10, 20, 300, 174),
 	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true) {
 
+	new ButtonWidget(this, "AboutDialog.Close", Common::U32String("Close"), Common::U32String(), kCloseCmd);
+
 	reflowLayout();
 
 	int i;
@@ -241,7 +243,7 @@ void AboutDialog::close() {
 void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 	Dialog::drawDialog(layerToDraw);
 
-	setTextDrawableArea(Common::Rect(_x, _y, _x + _w, _y + _h));
+	setTextDrawableArea(Common::Rect(_x, _y + 25, _x + _w, _y + _h));
 
 	// Draw text
 	// TODO: Add a "fade" effect for the top/bottom text lines
@@ -336,11 +338,6 @@ void AboutDialog::handleTickle() {
 	}
 }
 
-void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
-	// Close upon any mouse click
-	close();
-}
-
 void AboutDialog::handleMouseWheel(int x, int y, int direction) {
 	const int stepping = 5 * _lineHeight * direction;
 
@@ -384,7 +381,7 @@ void AboutDialog::reflowLayout() {
 	const Common::Rect screenArea = g_system->getSafeOverlayArea(&screenW, &screenH);
 
 	_xOff = g_gui.xmlEval()->getVar("Globals.About.XOffset", 5);
-	_yOff = g_gui.xmlEval()->getVar("Globals.About.YOffset", 5);
+	_yOff = g_gui.xmlEval()->getVar("Globals.About.YOffset", 10);
 	int outerBorder = g_gui.xmlEval()->getVar("Globals.About.OuterBorder");
 
 	_w = screenArea.width() - 2 * outerBorder;
