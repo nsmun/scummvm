@@ -338,6 +338,12 @@ void AboutDialog::handleTickle() {
 	}
 }
 
+void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
+	// Close upon any mouse click
+	if (clickCount >= 2) close();
+	else Dialog::handleMouseUp(x, y, button, clickCount);
+}
+
 void AboutDialog::handleMouseWheel(int x, int y, int direction) {
 	const int stepping = 5 * _lineHeight * direction;
 
