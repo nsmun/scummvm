@@ -27,6 +27,7 @@
 #include "common/ustr.h"
 #include "common/array.h"
 #include "common/keyboard.h"
+#include "gui/widgets/scrollbar.h"
 
 namespace GUI {
 
@@ -43,7 +44,10 @@ protected:
 
 	int _xOff, _yOff;
 
+	ScrollBarWidget *_scrollBar;
+
 	void addLine(const Common::U32String &str);
+	void updateScrollBar();
 
 	EEHandler	*_eeHandler;
 
@@ -58,6 +62,7 @@ public:
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleKeyDown(Common::KeyState state) override;
 	void handleKeyUp(Common::KeyState state) override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	void reflowLayout() override;
 };

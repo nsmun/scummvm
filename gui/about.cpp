@@ -89,6 +89,8 @@ AboutDialog::AboutDialog(bool inGame)
 	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true) {
 
 	new ButtonWidget(this, "AboutDialog.Close", Common::U32String("Close"), Common::U32String(), kCloseCmd);
+	_scrollBar = new ScrollBarWidget(this, 0, 0, 5, 10);
+	_scrollBar->setTarget(this);
 
 	reflowLayout();
 
@@ -336,6 +338,7 @@ void AboutDialog::handleTickle() {
 		}
 		drawDialog(kDrawLayerForeground);
 	}
+	updateScrollBar();
 }
 
 void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
@@ -345,21 +348,8 @@ void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void AboutDialog::handleMouseWheel(int x, int y, int direction) {
-	const int stepping = 5 * _lineHeight * direction;
-
-	if (stepping == 0)
-		return;
-
-	_autoScroll = false;
-
-	int newScrollPos = _scrollPos + stepping;
-
-	if (newScrollPos < 0) {
-		_scrollPos = 0;
-	} else if ((uint32)newScrollPos < _lines.size() * _lineHeight) {
-		_scrollPos = newScrollPos;
-	}
-	drawDialog(kDrawLayerForeground);
+	_scrollBar->handleMouseWheel(x, y, direction);
+	updateScrollBar();
 }
 
 void AboutDialog::handleKeyDown(Common::KeyState state) {
@@ -379,6 +369,29 @@ void AboutDialog::handleKeyUp(Common::KeyState state) {
 		close();
 }
 
+void AboutDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+    if (cmd == kSetPositionCmd) {
+        _scrollPos = (int)data * _lineHeight;
+        _autoScroll = false;
+        drawDialog(kDrawLayerForeground);
+    } else {
+        Dialog::handleCommand(sender, cmd, data);
+    }
+	updateScrollBar();
+}
+
+void AboutDialog::updateScrollBar() {
+    int numLines = _lines.size();
+    int visibleLines = _h / _lineHeight;
+    int currentLine = _scrollPos / _lineHeight;
+
+    _scrollBar->_numEntries = numLines;
+    _scrollBar->_currentPos = currentLine;
+    _scrollBar->_entriesPerPage = visibleLines;
+    _scrollBar->recalc();
+}
+
+
 void AboutDialog::reflowLayout() {
 	Dialog::reflowLayout();
 	int i;
@@ -386,7 +399,7 @@ void AboutDialog::reflowLayout() {
 	int16 screenW, screenH;
 	const Common::Rect screenArea = g_system->getSafeOverlayArea(&screenW, &screenH);
 
-	_xOff = g_gui.xmlEval()->getVar("Globals.About.XOffset", 5);
+	_xOff = g_gui.xmlEval()->getVar("Globals.About.XOffset", 20);
 	_yOff = g_gui.xmlEval()->getVar("Globals.About.YOffset", 10);
 	int outerBorder = g_gui.xmlEval()->getVar("Globals.About.OuterBorder");
 
@@ -397,6 +410,7 @@ void AboutDialog::reflowLayout() {
 
 	// Heuristic to compute 'optimal' dialog width
 	int maxW = _w - 2*_xOff;
+
 	_w = 0;
 	for (i = 0; i < ARRAYSIZE(credits); i++) {
 		int tmp = g_gui.getStringWidth(credits[i]) + 5;
@@ -409,6 +423,9 @@ void AboutDialog::reflowLayout() {
 	// Center the dialog in the screen
 	_x = (screenW - _w) / 2;
 	_y = (screenH - _h) / 2;
+
+	int scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
+	_scrollBar->resize(_w - scrollBarWidth - 1, 0, scrollBarWidth, _h, false);
 
 	// Make it fit in the safe area
 	screenArea.constrain(_x, _y, _w, _h);
