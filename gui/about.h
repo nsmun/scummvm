@@ -46,7 +46,7 @@ protected:
 	int _xOff, _yOff;
 
 	ScrollBarWidget *_scrollBar;
-	ScrollContainerWidget *_container;
+	ButtonWidget * _closeButton;
 
 	void addLine(const Common::U32String &str);
 	void updateScrollBar();

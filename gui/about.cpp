@@ -88,8 +88,7 @@ AboutDialog::AboutDialog(bool inGame)
 	: Dialog("AboutDialog"), //10, 20, 300, 174
 	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true) {
 
-	
-	_container = new ScrollContainerWidget(this, 5, 5, 100, 100, 0);
+	_closeButton = new ButtonWidget(this, _w/2 - 30, _h - 41, 60, 25, Common::U32String("Close"), Common::U32String(), kCloseCmd);
 	
 	_scrollBar = new ScrollBarWidget(this, 0, 0, 5, 10);
 	_scrollBar->setTarget(this);
@@ -247,7 +246,7 @@ void AboutDialog::close() {
 void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 	Dialog::drawDialog(layerToDraw);
 
-	setTextDrawableArea(Common::Rect(_x, _y + 5, _x + _w, _y + _h - 35));
+	setTextDrawableArea(Common::Rect(_x, _y + 5, _x + _w, _y + _h - 49));
 
 	// Draw text
 	// TODO: Add a "fade" effect for the top/bottom text lines
@@ -362,14 +361,10 @@ void AboutDialog::handleKeyDown(Common::KeyState state) {
 		return;
 	}
 
-	if (state.ascii)
-		_willClose = true;
 }
 
 
 void AboutDialog::handleKeyUp(Common::KeyState state) {
-	if (state.ascii && _willClose){}
-		//close();
 }
 
 void AboutDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -429,13 +424,10 @@ void AboutDialog::reflowLayout() {
 
 	int scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 	_scrollBar->resize(_w - scrollBarWidth - 1, 0, scrollBarWidth, _h, false);
+	_closeButton->resize(_w/2 - 30, _h - 41, 60, 25);
 
 	// Make it fit in the safe area
 	screenArea.constrain(_x, _y, _w, _h);
-
-	new ButtonWidget(this, _w/2 - 30, _h - 25, 60, 25, Common::U32String("Close"), Common::U32String(), kCloseCmd);
-
-	_container->resize(5, 5, _w - 30, _h - 40);
 }
 
 
