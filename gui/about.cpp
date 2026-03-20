@@ -85,10 +85,12 @@ static const char *const gpl_text[] = {
 #include "gui/credits.h"
 
 AboutDialog::AboutDialog(bool inGame)
-	: Dialog(10, 20, 300, 174),
+	: Dialog("AboutDialog"), //10, 20, 300, 174
 	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true) {
 
-	new ButtonWidget(this, "AboutDialog.Close", Common::U32String("Close"), Common::U32String(), kCloseCmd);
+	
+	_container = new ScrollContainerWidget(this, 5, 5, 100, 100, 0);
+	
 	_scrollBar = new ScrollBarWidget(this, 0, 0, 5, 10);
 	_scrollBar->setTarget(this);
 
@@ -245,7 +247,7 @@ void AboutDialog::close() {
 void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 	Dialog::drawDialog(layerToDraw);
 
-	setTextDrawableArea(Common::Rect(_x, _y + 25, _x + _w, _y + _h));
+	setTextDrawableArea(Common::Rect(_x, _y + 5, _x + _w, _y + _h - 35));
 
 	// Draw text
 	// TODO: Add a "fade" effect for the top/bottom text lines
@@ -308,7 +310,7 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 
 		Common::U32String renderStr(strLineItrBegin, strLineItrEnd);
 		if (!renderStr.empty())
-			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()),
+			g_gui.theme()->drawText(Common::Rect(_x + _xOff - 16, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()),
 			                        renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,
 			                        ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		y += _lineHeight;
@@ -364,9 +366,10 @@ void AboutDialog::handleKeyDown(Common::KeyState state) {
 		_willClose = true;
 }
 
+
 void AboutDialog::handleKeyUp(Common::KeyState state) {
-	if (state.ascii && _willClose)
-		close();
+	if (state.ascii && _willClose){}
+		//close();
 }
 
 void AboutDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -429,6 +432,10 @@ void AboutDialog::reflowLayout() {
 
 	// Make it fit in the safe area
 	screenArea.constrain(_x, _y, _w, _h);
+
+	new ButtonWidget(this, _w/2 - 30, _h - 25, 60, 25, Common::U32String("Close"), Common::U32String(), kCloseCmd);
+
+	_container->resize(5, 5, _w - 30, _h - 40);
 }
 
 

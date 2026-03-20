@@ -28,6 +28,7 @@
 #include "common/array.h"
 #include "common/keyboard.h"
 #include "gui/widgets/scrollbar.h"
+#include "gui/widgets/scrollcontainer.h"
 
 namespace GUI {
 
@@ -45,11 +46,14 @@ protected:
 	int _xOff, _yOff;
 
 	ScrollBarWidget *_scrollBar;
+	ScrollContainerWidget *_container;
 
 	void addLine(const Common::U32String &str);
 	void updateScrollBar();
 
 	EEHandler	*_eeHandler;
+
+
 
 public:
 	AboutDialog(bool inGame = false);
@@ -65,6 +69,7 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	void reflowLayout() override;
+
 };
 
 } // End of namespace GUI
