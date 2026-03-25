@@ -88,7 +88,7 @@ AboutDialog::AboutDialog(bool inGame)
 	: Dialog("AboutDialog"), //10, 20, 300, 174
 	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true) {
 
-	_closeButton = new ButtonWidget(this, _w/2 - 30, _h - 41, 60, 25, Common::U32String("Close"), Common::U32String(), kCloseCmd);
+	_closeButton = new ButtonWidget(this, _w/2 - 30, _h - 41, 60, 25, _("Close"), Common::U32String(), kCloseCmd);
 	
 	_scrollBar = new ScrollBarWidget(this, 0, 0, 5, 10);
 	_scrollBar->setTarget(this);
@@ -310,8 +310,8 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 		Common::U32String renderStr(strLineItrBegin, strLineItrEnd);
 		if (!renderStr.empty())
 			g_gui.theme()->drawText(Common::Rect(_x + _xOff - 16, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()),
-			                        renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,
-			                        ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+				renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,
+				ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		y += _lineHeight;
 	}
 }
@@ -368,25 +368,25 @@ void AboutDialog::handleKeyUp(Common::KeyState state) {
 }
 
 void AboutDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-    if (cmd == kSetPositionCmd) {
-        _scrollPos = (int)data * _lineHeight;
-        _autoScroll = false;
-        drawDialog(kDrawLayerForeground);
-    } else {
-        Dialog::handleCommand(sender, cmd, data);
-    }
+	if (cmd == kSetPositionCmd) {
+		_scrollPos = (int)data * _lineHeight;
+		_autoScroll = false;
+		drawDialog(kDrawLayerForeground);
+	} else {
+		Dialog::handleCommand(sender, cmd, data);
+	}
 	updateScrollBar();
 }
 
 void AboutDialog::updateScrollBar() {
-    int numLines = _lines.size();
-    int visibleLines = _h / _lineHeight;
-    int currentLine = _scrollPos / _lineHeight;
+	int numLines = _lines.size();
+	int visibleLines = _h / _lineHeight;
+	int currentLine = _scrollPos / _lineHeight;
 
-    _scrollBar->_numEntries = numLines;
-    _scrollBar->_currentPos = currentLine;
-    _scrollBar->_entriesPerPage = visibleLines;
-    _scrollBar->recalc();
+	_scrollBar->_numEntries = numLines;
+	_scrollBar->_currentPos = currentLine;
+	_scrollBar->_entriesPerPage = visibleLines;
+	_scrollBar->recalc();
 }
 
 
@@ -597,7 +597,7 @@ void EEWidget::drawWidget() {
 
 void EEWidget::addDirtyRect(const Common::Rect &r) {
 	// TODO: Partially invalidate the widget
-        markAsDirty();
+	markAsDirty();
 }
 
 void EEWidget::handleTickle() {
@@ -940,7 +940,7 @@ void EEWidget::docollisions() {
 			else
 				_bvelx = abs(_bvelx);
 		} else if ((_tbx > 147 && 161 - _tbx >= polecol[91 - _tby]) ||
-				   (_tbx < 148 && _tbx - 133 >= polecol[91 - _tby])) {
+					(_tbx < 148 && _tbx - 133 >= polecol[91 - _tby])) {
 			if (_bvely > 0) {
 				int dx = _tbx - 145;
 				if (dx < -5) _bvelx = -abs(_bvelx);
@@ -1236,7 +1236,7 @@ void EEWidget::putshapes() {
 	const int *ptr = frames;
 	for (int i = 0; i < 6; i++, ptr += 4) {
 		Common::Rect r(_offsetX + ptr[0] * _scale, _offsetY + ptr[1] * _scale,
-		               _offsetX + ptr[2] * _scale, _offsetY + ptr[3] * _scale);
+						_offsetX + ptr[2] * _scale, _offsetY + ptr[3] * _scale);
 		fillRect(r, (i < 5 ? color1 : color2));
 	}
 
